@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 
 let persons = [
   {
@@ -28,6 +29,12 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello World!</h1>");
 });
 
+app.get("/info", (req, res) => {
+  const serverTime = new Date();
+  const html = `Phonebook has info for ${persons.length} people <br/><br/> ${serverTime}`;
+  res.send(html);
+});
+
 app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
@@ -43,17 +50,19 @@ app.get("/api/persons/:id", (req, res) => {
   }
 });
 
+app.post("/api/persons", (req, res) => {
+  const person = req.body;
+  const largeRandomValue = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+  person.id = String(largeRandomValue);
+  persons = persons.concat(person);
+  res.send(person);
+});
+
 app.delete("/api/persons/:id", (req, res) => {
   const id = req.params.id;
   persons = persons.filter((person) => person.id !== id);
   res.status(204).end();
   console.log(persons);
-});
-
-app.get("/info", (req, res) => {
-  const serverTime = new Date();
-  const html = `Phonebook has info for ${persons.length} people <br/><br/> ${serverTime}`;
-  res.send(html);
 });
 
 const PORT = 3001;
