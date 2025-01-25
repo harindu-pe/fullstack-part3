@@ -1,0 +1,28 @@
+{
+  "name": "fullstack-part3",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/harindu-pe/fullstack-part3#readme",
+  "bugs": {
+    "url": "https://github.com/harindu-pe/fullstack-part3/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harindu-pe/fullstack-part3.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
