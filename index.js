@@ -52,8 +52,26 @@ app.get("/api/persons/:id", (req, res) => {
 
 app.post("/api/persons", (req, res) => {
   const person = req.body;
+
+  if (!person.name || !person.number) {
+    return res.status(400).json({
+      error: "content missing",
+    });
+  }
+
+  const exists = persons.filter(
+    (storedPerson) => storedPerson.name === person.name
+  );
+
+  if (exists.length > 0) {
+    return res.status(400).json({
+      error: "name exists",
+    });
+  }
+
   const largeRandomValue = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
   person.id = String(largeRandomValue);
+
   persons = persons.concat(person);
   res.send(person);
 });
