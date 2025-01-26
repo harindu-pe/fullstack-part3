@@ -1,9 +1,19 @@
 const express = require("express");
 const app = express();
-const morgan = require('morgan')
+const morgan = require("morgan");
 app.use(express.json());
-app.use(morgan('tiny'))
 
+// morgan
+morgan.token("data", function (req, res) {
+  console.log(req.body);
+  return JSON.stringify(req.body);
+});
+
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :data")
+);
+
+// persons array
 let persons = [
   {
     id: "1",
@@ -53,7 +63,7 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 app.post("/api/persons", (req, res) => {
-  const person = req.body;
+  const person = { ...req.body };
 
   if (!person.name || !person.number) {
     return res.status(400).json({
@@ -75,6 +85,7 @@ app.post("/api/persons", (req, res) => {
   person.id = String(largeRandomValue);
 
   persons = persons.concat(person);
+  //   res.status(200).end();
   res.send(person);
 });
 
@@ -85,6 +96,7 @@ app.delete("/api/persons/:id", (req, res) => {
   console.log(persons);
 });
 
+// connecting app to port
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
