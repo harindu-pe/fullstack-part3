@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 app.use(cors());
 app.use(express.json());
+app.use(express.static("dist"));
 
 // morgan
 morgan.token("data", function (req, res) {
@@ -38,10 +39,6 @@ let persons = [
     number: "39-23-6423122",
   },
 ];
-
-app.get("/", (req, res) => {
-  res.send("<h1>Hello World!</h1>");
-});
 
 app.get("/info", (req, res) => {
   const serverTime = new Date();
