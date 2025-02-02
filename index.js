@@ -43,25 +43,38 @@ app.use(
 //   },
 // ];
 
-app.get("/info", (req, res) => {
+app.get("/info", (req, res, next) => {
   const serverTime = new Date();
-  const html = `Phonebook has info for ${persons.length} people <br/><br/> ${serverTime}`;
-  res.send(html);
+
+  Entries.find({})
+    .then((persons) => {
+      const html = `Phonebook has info for ${persons.length} people <br/><br/> ${serverTime}`;
+      res.send(html);
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/api/persons", (req, res) => {
-  Entries.find({}).then((persons) => {
-    res.json(persons);
-  });
+app.get("/api/persons", (req, res, next) => {
+  Entries.find({})
+    .then((persons) => {
+      res.json(persons);
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/api/persons/:id", (req, res) => {
-  Entries.findById(req.params.id).then((person) => {
-    res.json(person);
-  });
+app.get("/api/persons/:id", (req, res, next) => {
+  Entries.findById(req.params.id)
+    .then((person) => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
 
   if (!body.name || !body.number) {
@@ -73,18 +86,34 @@ app.post("/api/persons", (req, res) => {
     number: body.number || false,
   });
 
-  entry.save().then((savedPerson) => {
-    res.json(savedPerson);
-  });
+  entry
+    .save()
+    .then((savedPerson) => {
+      res.json(savedPerson);
+    })
+    .catch((error) => next(error));
 });
 
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res, next) => {
   Entries.findByIdAndDelete(req.params.id)
     .then((result) => {
       res.status(204).end();
     })
-    .catch((error) => console.log(error));
+    .catch((error) => next(error));
 });
+
+// error handling
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 // connecting app to port
 const PORT = process.env.PORT;
